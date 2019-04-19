@@ -1,8 +1,10 @@
 package com.willowtree.test;
 
 import com.willowtree.test.data.*;
+import com.willowtree.test.repository.MetricsRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
@@ -21,6 +23,8 @@ public class NameGameService {
 
     private final Logger LOG = LoggerFactory.getLogger(NameGameService.class);
     private RestTemplate restTemplate;
+    @Autowired
+    private MetricsRepository repo;
 
     public NameGameService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -82,10 +86,17 @@ public class NameGameService {
     }
 
     public boolean validateResponse(ChallengeResponse response) {
+        Event event = new Event();
+        event.setUserId(response.getUser());
+        event.setQuestionId(response.getQuestionId());
         if (response.getName().getId().equals(response.getImage().getId())) {
             LOG.debug("Matched by {} for question {}", response.getUser(), response.getQuestionId());
+            event.setCorrect(true);
+            repo.save(event);
             return true;
         }
+        event.setCorrect(false);
+        repo.save(event);
         return false;
     }
 

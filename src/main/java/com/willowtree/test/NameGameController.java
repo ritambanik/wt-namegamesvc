@@ -37,4 +37,10 @@ public class NameGameController {
         return new ResponseEntity<Boolean>(service.validateResponse(response), HttpStatus.OK);
     }
 
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleError(RuntimeException ex) {
+        return new ResponseEntity<>(
+                "Request failed with message: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
 }

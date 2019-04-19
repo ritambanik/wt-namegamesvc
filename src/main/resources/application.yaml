@@ -1,6 +1,13 @@
 spring:
   application:
     name: namegame-svc
+  data:
+    mongodb:
+      host: localhost
+      port: 27017
+      database: namegame-db
+      username: namegame
+      password: willowtree
 
 server:
   port: 8082
@@ -15,3 +22,4 @@ namegame-svc:
     name-options: 6
     image-options: 6
   url: https://www.willowtreeapps.com/api/v1.0/profiles
+
