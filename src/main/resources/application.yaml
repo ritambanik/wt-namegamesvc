@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: namegame-svc
+
+server:
+  port: 8082
+
+logging:
+  level:
+    root: DEBUG
+    com.willowtree.test: INFO
+
+namegame-svc:
+  default:
+    name-options: 6
+    image-options: 6
+  url: https://www.willowtreeapps.com/api/v1.0/profiles
