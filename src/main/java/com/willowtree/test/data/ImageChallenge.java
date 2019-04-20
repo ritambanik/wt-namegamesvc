@@ -1,13 +1,18 @@
 package com.willowtree.test.data;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 import java.util.UUID;
 
+@Document("EventChallenge")
 public class ImageChallenge {
 
-    private final ImageRecord image;
-    private final List<NameRecord> names;
-    private final String questionId;
+    private ImageRecord image;
+    private List<NameRecord> names;
+    private String questionId;
+
+    public ImageChallenge() { }
 
     public ImageChallenge(ImageRecord image, List<NameRecord> names) {
         this.image = image;
@@ -25,6 +30,18 @@ public class ImageChallenge {
 
     public String getQuestionId() {
         return questionId;
+    }
+
+    public void setImage(ImageRecord image) {
+        this.image = image;
+    }
+
+    public void setNames(List<NameRecord> names) {
+        this.names = names;
+    }
+
+    public void setQuestionId(String questionId) {
+        this.questionId = questionId;
     }
 }
 

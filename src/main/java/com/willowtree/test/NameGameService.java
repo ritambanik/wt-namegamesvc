@@ -1,7 +1,9 @@
 package com.willowtree.test;
 
 import com.willowtree.test.data.*;
+import com.willowtree.test.repository.ImageChallengeRepository;
 import com.willowtree.test.repository.MetricsRepository;
+import com.willowtree.test.repository.NameChallengeRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
@@ -24,7 +27,11 @@ public class NameGameService {
     private final Logger LOG = LoggerFactory.getLogger(NameGameService.class);
     private RestTemplate restTemplate;
     @Autowired
-    private MetricsRepository repo;
+    private MetricsRepository metricsRepository;
+    @Autowired
+    private NameChallengeRepository nameChallengeRepository;
+    @Autowired
+    private ImageChallengeRepository imageChallengeRepository;
 
     public NameGameService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -39,50 +46,90 @@ public class NameGameService {
     @Value("${namegame-svc.url}")
     private String url;
 
-    public NameChallenge getNameChallenge(Integer count) {
-        LOG.debug("# of options = {}", count);
+    /**
+     * Fetches existing name challenge or create a new name challenge.
+     *
+     * @param count number of options to be shown; it's optional
+     * @param questionId existing question id; it's optional
+     * @return existing or new name challenge
+     */
+    public NameChallenge getNameChallenge(Integer count, String questionId) {
+        LOG.debug("# of options = {} and question {}", count, questionId);
         if (count == null) {
             count = defaultNumOfNameOptions;
         }
         List<Profile> profiles;
-        if (getAllProfiles().isPresent()) {
-            profiles = getAllProfiles().get().stream().limit(count).collect(Collectors.toList());
-            Profile any = profiles.get(new Random().nextInt(profiles.size()));
-            List<ImageRecord> images = profiles.stream().map(
-                    profile -> new ImageRecord(profile.getId(), profile.getHeadshot())).collect(Collectors.toList());
-            return new NameChallenge(new NameRecord(any.getFirstName(), any.getLastName(), any.getId()), images);
+        if(!StringUtils.isEmpty(questionId)){
+            return nameChallengeRepository.findByQuestionId(questionId);
+        } else {
+            if(getAllProfiles().isPresent()) {
+                profiles = getAllProfiles().get().stream().limit(count).collect(Collectors.toList());
+                Profile any = profiles.get(new Random().nextInt(profiles.size()));
+                List<ImageRecord> images = profiles.stream().map(
+                        profile -> new ImageRecord(profile.getId(), profile.getHeadshot())).collect(Collectors.toList());
+                NameChallenge nameChallenge = new NameChallenge(new NameRecord(any.getFirstName(), any.getLastName(), any.getId()), images);
+                nameChallengeRepository.save(nameChallenge);
+                return nameChallenge;
+            }
+            throw new RuntimeException("Profile information cannot be retrieved");
         }
-        throw new RuntimeException("Profile information cannot be retrieved");
     }
 
-    public ImageChallenge getImageChallenge(Integer count) {
-        LOG.debug("# of options = {}", count);
+    /**
+     * Fetches existing image challenge or create new image challenge.
+     *
+     * @param count number of options to be shown; it's optional
+     * @param questionId existing question id; it's optional
+     * @return existing or new name challenge
+     */
+    public ImageChallenge getImageChallenge(Integer count, String questionId) {
+        LOG.debug("# of options = {} and question {}", count, questionId);
         if (count == null) {
             count = defaultNumOfImageOptions;
         }
         List<Profile> profiles;
-        if (getAllProfiles().isPresent()) {
-            profiles = getAllProfiles().get().stream().limit(count).collect(Collectors.toList());
-            Profile any = profiles.get(new Random().nextInt(profiles.size()));
-            List<NameRecord> names = profiles.stream().map(profile -> new NameRecord(
-                    profile.getFirstName(), profile.getLastName(), profile.getId())).collect(Collectors.toList());
-            return new ImageChallenge(new ImageRecord(any.getId(), any.getHeadshot()), names);
+        if (!StringUtils.isEmpty(questionId)) {
+            return imageChallengeRepository.findByQuestionId(questionId);
+        } else {
+            if (getAllProfiles().isPresent()) {
+                profiles = getAllProfiles().get().stream().limit(count).collect(Collectors.toList());
+                Profile any = profiles.get(new Random().nextInt(profiles.size()));
+                List<NameRecord> names = profiles.stream().map(profile -> new NameRecord(
+                        profile.getFirstName(), profile.getLastName(), profile.getId())).collect(Collectors.toList());
+                ImageChallenge imageChallenge = new ImageChallenge(new ImageRecord(any.getId(), any.getHeadshot()), names);
+                imageChallengeRepository.save(imageChallenge);
+                return imageChallenge;
+            }
+            throw new RuntimeException("Profile information cannot be retrieved");
         }
-        throw new RuntimeException("Profile information cannot be retrieved");
-
     }
 
-    public NameChallenge getMattChallenge() {
+    /**
+     * Fetches name challenge for Mat(t).
+     *
+     * @param questionId existing question id; it's optional
+     * @return existing or new name challenge for Mat(t)
+     */
+    public NameChallenge getMattChallenge(String questionId) {
+        LOG.debug("Question {} ", questionId);
         List<Profile> profiles;
-        if (getAllProfiles().isPresent()) {
-            profiles = getAllProfiles().get().stream().filter(profile -> (
-                    "Mat".equals(profile.getFirstName()) || "Matt".equals(profile.getFirstName()))).collect(Collectors.toList());
-            Profile any = profiles.get(new Random().nextInt(profiles.size()));
-            List<ImageRecord> images = profiles.stream().map(
-                    profile -> new ImageRecord(profile.getId(), profile.getHeadshot())).collect(Collectors.toList());
-            return new NameChallenge(new NameRecord(any.getFirstName(), any.getLastName(), any.getId()), images);
+        if(!StringUtils.isEmpty(questionId)){
+            return nameChallengeRepository.findByQuestionId(questionId);
+        } else {
+            if (getAllProfiles().isPresent()) {
+                profiles = getAllProfiles().get().stream().filter(profile -> (
+                        "Mat".equals(profile.getFirstName())
+                                || "Matt".equals(profile.getFirstName()))).collect(Collectors.toList());
+                Profile any = profiles.get(new Random().nextInt(profiles.size()));
+                List<ImageRecord> images = profiles.stream().map(
+                        profile -> new ImageRecord(profile.getId(), profile.getHeadshot())).collect(Collectors.toList());
+                NameChallenge nameChallenge = new NameChallenge(
+                        new NameRecord(any.getFirstName(), any.getLastName(), any.getId()), images);
+                nameChallengeRepository.save(nameChallenge);
+                return nameChallenge;
+            }
+            throw new RuntimeException("Profile information cannot be retrieved");
         }
-        throw new RuntimeException("Profile information cannot be retrieved");
     }
 
     public boolean validateResponse(ChallengeResponse response) {
@@ -92,11 +139,11 @@ public class NameGameService {
         if (response.getName().getId().equals(response.getImage().getId())) {
             LOG.debug("Matched by {} for question {}", response.getUser(), response.getQuestionId());
             event.setCorrect(true);
-            repo.save(event);
+            metricsRepository.save(event);
             return true;
         }
         event.setCorrect(false);
-        repo.save(event);
+        metricsRepository.save(event);
         return false;
     }
 

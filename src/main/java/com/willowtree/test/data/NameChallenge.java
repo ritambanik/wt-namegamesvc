@@ -1,8 +1,11 @@
 package com.willowtree.test.data;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 import java.util.UUID;
 
+@Document("NameChallenge")
 public class NameChallenge {
 
     private NameRecord name;

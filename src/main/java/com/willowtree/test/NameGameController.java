@@ -16,19 +16,21 @@ public class NameGameController {
 
     @GetMapping("/name-game/images")
     public ResponseEntity<NameChallenge> getImagesWithName(
-            @RequestParam(value = "count", required = false) Integer count) {
-        return new ResponseEntity<NameChallenge>(service.getNameChallenge(count), HttpStatus.OK);
+            @RequestParam(value = "count", required = false) Integer count,
+            @RequestParam(value = "questionId", required = false) String questionId) {
+        return new ResponseEntity<NameChallenge>(service.getNameChallenge(count, questionId), HttpStatus.OK);
     }
 
     @GetMapping("/name-game/names")
     public ResponseEntity<ImageChallenge> getNamesWithImage(
-            @RequestParam(value = "count", required = false) Integer count) {
-        return new ResponseEntity<ImageChallenge>(service.getImageChallenge(count), HttpStatus.OK);
+            @RequestParam(value = "count", required = false) Integer count,
+            @RequestParam(value = "questionId", required = false) String questionId) {
+        return new ResponseEntity<ImageChallenge>(service.getImageChallenge(count, questionId), HttpStatus.OK);
     }
 
     @GetMapping("/name-game/allMatts")
-    public ResponseEntity<NameChallenge> getImagesForMatt() {
-        return new ResponseEntity<NameChallenge>(service.getMattChallenge(), HttpStatus.OK);
+    public ResponseEntity<NameChallenge> getImagesForMatt(@RequestParam(value = "questionId", required = false) String questionId) {
+        return new ResponseEntity<NameChallenge>(service.getMattChallenge(questionId), HttpStatus.OK);
     }
 
     @PostMapping

@@ -1,6 +1,5 @@
 package com.willowtree.test.data;
 
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.Calendar;
@@ -9,8 +8,6 @@ import java.util.Date;
 @Document("metrics")
 public class Event {
 
-  //  @Id
-  //  private long id;
     private String userId;
     private boolean isCorrect;
     private String questionId;
