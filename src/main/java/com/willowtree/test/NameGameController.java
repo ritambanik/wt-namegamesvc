@@ -8,27 +8,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@RestController("/name-game")
+@RestController("/challenge")
 public class NameGameController {
 
     @Autowired
     private NameGameService service;
 
-    @GetMapping("/name-game/images")
+    @GetMapping("/challenge/images")
     public ResponseEntity<NameChallenge> getImagesWithName(
             @RequestParam(value = "count", required = false) Integer count,
             @RequestParam(value = "questionId", required = false) String questionId) {
         return new ResponseEntity<NameChallenge>(service.getNameChallenge(count, questionId), HttpStatus.OK);
     }
 
-    @GetMapping("/name-game/names")
+    @GetMapping("/challenge/names")
     public ResponseEntity<ImageChallenge> getNamesWithImage(
             @RequestParam(value = "count", required = false) Integer count,
             @RequestParam(value = "questionId", required = false) String questionId) {
         return new ResponseEntity<ImageChallenge>(service.getImageChallenge(count, questionId), HttpStatus.OK);
     }
 
-    @GetMapping("/name-game/allMatts")
+    @GetMapping("/challenge/allMatts")
     public ResponseEntity<NameChallenge> getImagesForMatt(@RequestParam(value = "questionId", required = false) String questionId) {
         return new ResponseEntity<NameChallenge>(service.getMattChallenge(questionId), HttpStatus.OK);
     }
