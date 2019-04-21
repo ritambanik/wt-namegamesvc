@@ -2,9 +2,12 @@ package com.willowtree.test.data;
 
 public class NameRecord {
 
-    private final String firstName;
-    private final String lastName;
-    private final String id;
+    private String firstName;
+    private String lastName;
+    private String id;
+
+    public NameRecord() {
+    }
 
     public NameRecord(String firstName, String lastName, String id) {
         this.firstName = firstName;
@@ -24,4 +27,15 @@ public class NameRecord {
         return id;
     }
 
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 }

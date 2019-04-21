@@ -2,8 +2,11 @@ package com.willowtree.test.data;
 
 public class ImageRecord {
 
-    private final String id;
-    private final Headshot headshot;
+    private String id;
+    private Headshot headshot;
+
+    public ImageRecord() {
+    }
 
     public ImageRecord(String id, Headshot headshot) {
         this.id = id;
@@ -18,4 +21,11 @@ public class ImageRecord {
         return headshot;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setHeadshot(Headshot headshot) {
+        this.headshot = headshot;
+    }
 }
