@@ -1,0 +1,25 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: namegame-challenge-deploy
+spec:
+  replicas: 2
+  minReadySeconds: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: namegame-challenge
+    spec:
+      containers:
+      - name: namegame-challenge-pod
+        image: ritambanik/namegame-challenge
+        env:
+        - name: MONGODB_HOST
+          value: mongodb
+        ports:
+        - containerPort: 8082
